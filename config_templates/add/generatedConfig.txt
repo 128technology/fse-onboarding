@@ -1,0 +1,219 @@
+admin@node1.blaster-conductor# compare config running candidate
+
+config
+
+    authority
+
+        router   l3nidsample
+            name                        l3nidsample
+            location                    "Atlanta, GA"
+            location-coordinates        +33.7601772-084.3585778/
+            router-group                l3nid
+            inter-node-security         internal
+
+            entitlement
+                id             128T-FSE-L3NID-150-DD_MM_YYYY
+                max-bandwidth  150000000
+            exit
+
+            application-identification
+                mode  tls
+                mode  module
+            exit
+
+            dns-config                  static
+                mode     static
+                address  1.1.1.1
+                address  1.0.0.1
+            exit
+
+            nat-pool                    mgmt-egress
+                name          mgmt-egress
+
+                address-pool  172.25.1.10/32
+                    address      172.25.1.10/32
+                    tenant-name  _internal_
+                exit
+            exit
+
+            system
+
+                ntp
+
+                    server  8.8.8.8
+                        ip-address  8.8.8.8
+                    exit
+                exit
+            exit
+
+            node                        node1
+                name              node1
+                role              combo
+
+                device-interface  provider
+                    name               provider
+                    pci-address        0000:00:04.0
+
+                    network-interface  provider
+                        name                    provider
+                        conductor               true
+                        default-route           true
+
+                        neighborhood            datacenter
+                            name                datacenter
+
+                            path-mtu-discovery
+                                enabled  true
+                            exit
+                        exit
+                        tenant                  provider
+                        inter-router-security   internal
+                        source-nat              false
+                        management              true
+
+                        management-vector
+                            name      provider
+                            priority  100
+                        exit
+
+                        address                 172.25.1.10
+                            ip-address     172.25.1.10
+                            prefix-length  24
+                            gateway        172.25.1.1
+                        exit
+                        egress-source-nat-pool  mgmt-egress
+                    exit
+                exit
+
+                device-interface  customer
+                    name               customer
+                    pci-address        0000:00:05.0
+
+                    network-interface  customer
+                        name     customer
+                        tenant   customer
+
+                        address  172.25.1.1
+                            ip-address     172.25.1.1
+                            prefix-length  24
+                            gateway        172.25.1.10
+                        exit
+                    exit
+                exit
+            exit
+
+            service-route               l3nid-inbound
+                name          l3nid-inbound
+                service-name  l3nid-inbound
+
+                next-hop      node1 customer
+                    node-name   node1
+                    interface   customer
+                    gateway-ip  172.25.1.10
+                exit
+            exit
+
+            service-route               l3nid-outbound
+                name          l3nid-outbound
+                service-name  l3nid-outbound
+
+                next-hop      node1 provider
+                    node-name   node1
+                    interface   provider
+                    gateway-ip  172.25.1.1
+                exit
+            exit
+
+            service-route               dns
+                name          dns
+                service-name  l3nidsample-dns
+
+                next-hop      node1 provider
+                    node-name   node1
+                    interface   provider
+                    gateway-ip  172.25.1.1
+                exit
+            exit
+
+            service-route               mgmt
+                name          mgmt
+                service-name  l3nidsample-mgmt
+
+                host          node1
+                    node-name       node1
+                    target-address  169.254.127.127
+                exit
+            exit
+
+            dns-cache
+                tenant           _internal_
+                ingress-service  l3nidsample-dns
+            exit
+
+            dns-app-id
+                include-all-builtin-apps  true
+            exit
+        exit
+
+        tenant   provider
+            name  provider
+        exit
+
+        tenant   customer
+            name  customer
+        exit
+
+        service  l3nidsample-mgmt
+            name           l3nidsample-mgmt
+
+            applies-to     router
+                type         router
+                router-name  l3nidsample
+            exit
+
+            applies-to     router-group
+                type        router-group
+                group-name  datacenter
+            exit
+            security       internal
+            address        169.254.132.1/32
+
+            access-policy  mgmt
+                source  mgmt
+            exit
+        exit
+
+        service  l3nidsample-dns
+            name           l3nidsample-dns
+
+            applies-to     router
+                type         router
+                router-name  l3nidsample
+            exit
+
+            transport      udp
+                protocol    udp
+
+                port-range  53
+                    start-port  53
+                exit
+            exit
+            address        1.1.1.1
+            address        1.0.0.1
+
+            access-policy  customer
+                source  customer
+            exit
+        exit
+
+        service  l3nid-outbound
+            name           l3nid-outbound
+
+            access-policy  customer
+                source  customer
+            exit
+        exit
+    exit
+exit
+
+admin@node1.blaster-conductor#

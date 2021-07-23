@@ -1,0 +1,25 @@
+#!/usr/bin/python3
+
+"""
+Helper module for rehoming stores between pods.
+"""
+
+import sys
+
+import click
+
+from fse import fse_data, fse_db
+from provisioner import cli, log_utils
+from provisioner.database import database_helpers
+import subprocess, json, os, time, logging
+
+@cli.command()
+def main(LOG, verbose):
+    log_utils.audit(LOG, f"Querying list of templates from the router")
+
+    print(fse_data.CONDUCTOR_IP)
+    template_list = fse_data.REST_CONDUCTOR_INTERFACE.list_templates(fse_data.CONDUCTOR_IP[0])
+    print(template_list)
+
+if __name__ == "__main__":
+    main()

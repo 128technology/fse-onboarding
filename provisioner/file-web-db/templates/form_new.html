@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="form-wrapper">
+      <h2 class="title">Upload/Delete Form</h2>
+
+      <form method="POST" action="{{ url_for('upload') }}">
+          {{ form.hidden_tag() }}
+        <div id="errors">
+          {% for field, errors in form.errors.items() %}
+          <small class="form-text text-muted ">
+            {{ ', '.join(errors) }}
+          </small>
+          {% endfor %}
+        </div>
+        <table id="main-table">
+          {% for field in form if field.widget.input_type not in ['hidden', 'submit'] %}
+
+            <tr>
+              <td class="td-label">{{ field.label }}</td>
+              <td class="td-input">{{ field }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+          {{ form.submit }}
+      </form>
+    </div>
+
+{% endblock %}

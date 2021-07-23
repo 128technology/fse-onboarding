@@ -1,0 +1,15 @@
+*admin@node1.blaster-conductor# compare config running candidate
+
+config
+
+    authority
+
+        delete router force l3nidsample
+
+        delete service force l3nidsample-mgmt
+
+        delete service force l3nidsample-dns
+    exit
+exit
+
+*admin@node1.blaster-conductor#

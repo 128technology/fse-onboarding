@@ -1,0 +1,34 @@
+{
+  "instances": [
+    {
+      "name": "Instance_1",
+      "variables": {
+        "routerName": "l3nidsample",
+        "locationCoordinates": "+33.7601772-084.3585778/",
+        "location": "Atlanta, GA",
+        "interNodeSecurity": "internal",
+        "entitlement_mbs": "150",
+        "entitlement_end_date": "DD_MM_YYYY",
+        "provider_pciAddress": "0000:00:04.0",
+        "provider_ipAddress": "172.25.1.10",
+        "provider_prefixLength": "24",
+        "provider_gateway": "172.25.1.1",
+        "provider_tenant": "provider",
+        "customer_pciAddress": "0000:00:05.0",
+        "customer_tenant": "customer",
+        "interRouterSecurity": "internal",
+        "neighborhood_name": "datacenter",
+        "management_loopback": "169.254.132.1",
+        "management_tenant": "mgmt",
+        "management_service_security": "internal",
+        "dns_servers": [
+          "1.1.1.1",
+          "1.0.0.1"
+        ],
+        "ntp_servers": [
+          "8.8.8.8"
+        ]
+      }
+    }
+  ]
+}

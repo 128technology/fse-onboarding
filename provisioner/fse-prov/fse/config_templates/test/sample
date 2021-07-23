@@ -1,0 +1,13 @@
+{% for instance in instances %}
+{% editgroup %}
+{
+  "authority": {
+    "router": [
+      {
+        "name": "{{instance.name}}",
+        "location": "{{instance.location}}"
+      }
+    ]
+  }
+}
+{% endfor %}

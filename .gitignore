@@ -1,0 +1,12 @@
+.DS_Store
+._.DS_Store
+file-web-db/test
+venv/
+.python-version
+aws/.terraform
+aws/.terraform.lock.hcl
+aws/.terraform.tfstate.lock.info
+me.auto.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+testdisk.log

@@ -1,0 +1,19 @@
+{
+    "stores": [
+        {
+          "storeNumber": "16743",
+          "name": "RIST16743P01",
+          "storeId": "RIST16743P01"
+        },
+        {
+          "storeNumber": "05868",
+          "name": "RIST05868P01",
+          "storeId": "RIST05868P01"
+        },
+        {
+          "storeNumber": "07387",
+          "name": "RIST07387P01",
+          "storeId": "RIST07387P01"
+        }
+    ]
+}

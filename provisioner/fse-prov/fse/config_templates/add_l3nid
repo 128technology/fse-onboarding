@@ -1,0 +1,254 @@
+{% for instance in instances %}
+{% editgroup %}
+{% capture dns_service_name %}{{ instance.variables['routerName'] }}-dns{% endcapture %}
+{% capture mgmt_service_name %}{{ instance.variables['routerName']}}-mgmt{% endcapture %}
+{
+  "authority": {
+    "router": [
+      {
+        "name": "{{instance.variables['routerName']}}",
+        "location": "{{instance.variables['location']}}",
+        "locationCoordinates": "{{instance.variables['locationCoordinates']}}",
+        "routerGroup": [
+          "l3nid"
+        ],
+        "interNodeSecurity": "{{instance.variables['interNodeSecurity']}}",
+        "node": [
+          {
+            "name": "node1",
+            "role": "combo",
+            "deviceInterface": [
+              {
+                "name": "provider",
+                "pciAddress": "{{instance.variables['provider_pciAddress']}}",
+                "networkInterface": [
+                  {
+                    "name": "provider",
+                    "address": [
+                      {
+                        "ipAddress": "{{instance.variables['provider_ipAddress']}}",
+                        "prefixLength": "{{instance.variables['provider_prefixLength']}}",
+                        "gateway": "{{instance.variables['provider_gateway']}}"
+                      }
+                    ],
+                    "sourceNat": "false",
+                    "conductor": "true",
+                    "tenant": "{{instance.variables['provider_tenant']}}",
+                    "interRouterSecurity": "{{instance.variables['interRouterSecurity']}}",
+                    "neighborhood": [
+                      {
+                        "name": "{{instance.variables['neighborhood_name']}}",
+                        "pathMtuDiscovery": {
+                          "enabled": "true"
+                        }
+                      }
+                    ],
+                    "management": "true",
+                    "defaultRoute": "true",
+                    "managementVector": {
+                      "name": "provider",
+                      "priority": "100"
+                    },
+                    "egressSourceNatPool": "mgmt-egress"
+                  }
+                ]
+              },
+              {
+                "name": "customer",
+                "pciAddress": "{{instance.variables['customer_pciAddress']}}",
+                "networkInterface": [
+                  {
+                    "name": "customer",
+                    "tenant": "{{instance.variables['customer_tenant']}}",
+                    "address": [
+                      {
+                        "ipAddress": "{{instance.variables['provider_gateway']}}",
+                        "prefixLength": "{{instance.variables['provider_prefixLength']}}",
+                        "gateway": "{{instance.variables['provider_ipAddress']}}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reverseSsh": {}
+          }
+        ],
+        "dnsConfig": [
+          {
+            "mode": "static",
+            "address": [
+              {%- for address in instance.variables['dns_servers'] %}
+              "{{ address }}"{% if forloop.last == false %},{% endif %}
+              {%- endfor %}
+            ]
+          }
+        ],
+        "applicationIdentification": {
+          "mode": [
+            "tls",
+            "module"
+          ]
+        },
+        "entitlement": {
+          "id": "128T-FSE-L3NID-{{instance.variables['entitlement_mbs']}}-{{instance.variables['entitlement_end_date']}}",
+          "maxBandwidth": "{{instance.variables['entitlement_mbs']}}000000"
+        },
+        "system": {
+          "ntp": {
+            "server": [
+              {%- for address in instance.variables['ntp_servers'] %}
+              {
+                "ipAddress": "{{ address }}"
+              }{% if forloop.last == false %},{% endif %}
+              {%- endfor %}
+            ]
+          }
+        },
+        "serviceRoute": [
+          {
+            "name": "l3nid-inbound",
+            "serviceName": "l3nid-inbound",
+            "nextHop": [
+              {
+                "nodeName": "node1",
+                "interface": "customer",
+                "gatewayIp": "{{instance.variables['provider_ipAddress']}}"
+              }
+            ]
+          },
+          {
+            "name": "l3nid-outbound",
+            "serviceName": "l3nid-outbound",
+            "nextHop": [
+              {
+                "nodeName": "node1",
+                "interface": "provider",
+                "gatewayIp": "{{instance.variables['provider_gateway']}}"
+              }
+            ]
+          },
+          {
+            "name": "dns",
+            "serviceName": "{{ dns_service_name }}",
+            "nextHop": [
+              {
+                "nodeName": "node1",
+                "interface": "provider",
+                "gatewayIp": "{{instance.variables['provider_gateway']}}"
+              }
+            ]
+          },
+          {
+            "name": "mgmt",
+            "serviceName": "{{ mgmt_service_name }}",
+            "host": [
+              {
+                "nodeName": "node1",
+                "targetAddress": [
+                  "169.254.127.127"
+                ]
+              }
+            ]
+          }
+        ],
+        "dnsCache": {
+          "tenant": "_internal_",
+          "ingressService": "{{ dns_service_name }}"
+        },
+        "dnsAppId": {
+          "includeAllBuiltinApps": "true"
+        },
+        "natPool": [
+          {
+            "name": "mgmt-egress",
+            "addressPool": [
+              {
+                "address": "{{instance.variables['provider_ipAddress']}}/32",
+                "tenantName": [
+                  "_internal_"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "tenant": [
+      {
+        "name": "{{instance.variables['provider_tenant']}}"
+      },
+      {
+        "name": "{{instance.variables['customer_tenant']}}"
+      }
+    ],
+    "service": [
+      {
+        "name": "l3nid-outbound",
+        "accessPolicy": [
+          {
+            "source": "{{instance.variables['customer_tenant']}}"
+          }
+        ]
+      },
+      {
+        "name": "{{ mgmt_service_name }}",
+        "appliesTo": [
+          {
+            "type": "router",
+            "routerName": [
+              "{{instance.variables['routerName']}}"
+            ]
+          },
+          {
+            "type": "router-group",
+            "groupName": [
+              "datacenter"
+            ]
+          }
+        ],
+        "security": "{{instance.variables['management_service_security']}}",
+        "address": [
+          "{{instance.variables['management_loopback']}}/32"
+        ],
+        "accessPolicy": [
+          {
+            "source": "{{instance.variables['management_tenant']}}"
+          }
+        ]
+      },
+      {
+        "name": "{{ dns_service_name }}",
+        "appliesTo": [
+          {
+            "type": "router",
+            "routerName": [
+              "{{instance.variables['routerName']}}"
+            ]
+          }
+        ],
+        "accessPolicy": [
+          {
+            "source": "{{instance.variables['customer_tenant']}}"
+          }
+        ],
+        "address": [
+            {%- for address in instance.variables['dns_servers'] %}
+            "{{ address }}"{% if forloop.last == false %},{% endif %}
+            {%- endfor %}
+        ],
+        "transport": [
+          {
+            "protocol": "udp",
+            "portRange": [
+              {
+                "startPort": "53"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+{% endfor %}

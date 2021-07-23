@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <div class="form-wrapper">
+    <h2 class="search-results">Search Results</h2>
+      <table id="main-table">
+        {{ table }}
+      </table>
+  </div>
+
+{% endblock %}

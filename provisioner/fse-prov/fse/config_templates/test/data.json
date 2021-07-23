@@ -1,0 +1,23 @@
+{
+    "stores": [
+        {
+          "storeNumber": "16743",
+          "name": "128t-east",
+          "storeId": "RIST16743P01",
+          "location": "Burlington, MA"
+        },
+        {
+          "storeNumber": "05868",
+          "name": "RIST05868P01",
+          "storeId": "RIST05868P01",
+          "location": "Burlington, MA"
+        },
+        {
+          "storeNumber": "07387",
+          "name": "RIST07387P01",
+          "storeId": "RIST07387P01"
+        }
+    ]
+}
+
+{ "storeNumber": "05868", "name": "RIST05868P01", "storeId": "RIST05868P01", "location": "Burlington, MA" }

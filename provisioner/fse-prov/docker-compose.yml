@@ -1,0 +1,21 @@
+version: "3.4"
+services:
+  PROV:
+    image: fse-provisioner:${PROVISIONER_CONTAINER_VERSION}
+    privileged: true
+    restart: on-failure
+    ports:
+      - 3006:3006
+    volumes:
+      - PROV:/root/128T-provisioner
+      - PROV_salt:/etc/salt
+      - PROV_logs:/var/log
+      - ./provisioner/ssh:/home/admin/.ssh:ro
+      - ./provisioner/sandbox:/home/sandbox
+      - /root/config_templates:/usr/share/128T-provisioner/config_templates
+      - ./provisioner/provisioner.yml:/usr/share/128T-provisioner/provisioner.yml:ro
+
+volumes:
+  PROV: {}
+  PROV_logs: {}
+  PROV_salt: {}

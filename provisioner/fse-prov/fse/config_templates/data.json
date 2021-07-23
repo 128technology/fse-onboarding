@@ -1,0 +1,66 @@
+{
+    "stores": [
+      {
+        "storeNumber": "lanner1515",
+        "name": "Instance_1",
+        "variables": {
+          "routerName": "lanner1515",
+          "locationCoordinates": "+33.7601772-084.3585778/",
+          "location": "Atlanta, GA",
+          "interNodeSecurity": "internal",
+          "entitlement_mbs": "150",
+          "entitlement_end_date": "DD_MM_YYYY",
+          "provider_pciAddress": "0000:06:00.0",
+          "provider_ipAddress": "172.25.3.15",
+          "provider_prefixLength": "24",
+          "provider_gateway": "172.25.3.1",
+          "provider_tenant": "provider",
+          "customer_pciAddress": "0000:06:00.1",
+          "customer_tenant": "customer",
+          "interRouterSecurity": "internal",
+          "neighborhood_name": "datacenter",
+          "management_loopback": "10.53.0.1",
+          "management_tenant": "mgmt",
+          "management_service_security": "internal",
+          "dns_servers": [
+            "1.1.1.1",
+            "1.0.0.1"
+          ],
+          "ntp_servers": [
+            "8.8.8.8"
+          ]
+        }
+      },
+      {
+        "storeNumber": "lanner1616",
+        "name": "Instance_1",
+        "variables": {
+          "routerName": "lanner1616",
+          "locationCoordinates": "+33.7601772-084.3585778/",
+          "location": "Atlanta, GA",
+          "interNodeSecurity": "internal",
+          "entitlement_mbs": "150",
+          "entitlement_end_date": "DD_MM_YYYY",
+          "provider_pciAddress": "0000:06:00.0",
+          "provider_ipAddress": "172.25.3.15",
+          "provider_prefixLength": "24",
+          "provider_gateway": "172.25.3.1",
+          "provider_tenant": "provider",
+          "customer_pciAddress": "0000:06:00.1",
+          "customer_tenant": "customer",
+          "interRouterSecurity": "internal",
+          "neighborhood_name": "datacenter",
+          "management_loopback": "10.53.0.1",
+          "management_tenant": "mgmt",
+          "management_service_security": "internal",
+          "dns_servers": [
+            "1.1.1.1",
+            "1.0.0.1"
+          ],
+          "ntp_servers": [
+            "8.8.8.8"
+          ]
+        }
+      }
+    ]
+}

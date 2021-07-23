@@ -1,0 +1,24 @@
+[
+  {
+    "name": "List Templates",
+    "resource": "listtemplates",
+    "script": "/scripts/listTemplates.sh",
+    "userInput": {
+      "name": "listTemplate",
+      "description": "List Template",
+      "helptext": "",
+      "pattern": ""
+    }
+  },
+  {
+    "name": "Add Store",
+    "resource": "addstore",
+    "script": "/scripts/addStore.sh",
+    "userInput": {
+      "name": "addSiteId",
+      "description": "Site Identifier",
+      "helptext": "",
+      "pattern": "^[0-9]{5}$"
+    }
+  }
+]

@@ -1,0 +1,207 @@
+{% for instance in instances %}
+{% editgroup %}
+{
+  "authority": {
+    "name": "{{ instance["authority_name"] }}",
+    "conductor-address": [
+      "{{ instance["conductor_address"] }}"
+    ],
+    "dnsAppId": {
+      "generateServices": "true",
+      "baseService": "l3nid-outbound"
+    },
+    "router": [
+      {
+        "name": "conductor",
+        "location": "{{ instance["location"] }}",
+        "locationCoordinates": "{{ instance["locationCoordinates"] }}",
+        "system": {
+          "ntp": {
+            "server": [
+              {%- for address in instance["ntp_servers"] %}
+              {
+                "ipAddress": "{{ address }}"
+              }{% if forloop.last == false %},{% endif %}
+              {%- endfor %}
+            ]
+          }
+        },
+        "node": [
+          {
+            "name": "node1",
+            "assetId": "conductor"
+          }
+        ]
+      },
+      {
+        "name": "{{ instance["routerName"] }}",
+        "location": "{{ instance["location"] }}",
+        "locationCoordinates": "{{ instance["locationCoordinates"] }}",
+        "routerGroup": [
+          "datacenter"
+        ],
+        "interNodeSecurity": "{{ instance["interNodeSecurity"] }}",
+        "node": [
+          {
+            "name": "node1",
+            "assetId": "l3niddc",
+            "role": "combo",
+            "deviceInterface": [
+              {
+                "name": "mgmt",
+                "pciAddress": "{{ instance["mgmt_pciAddress"] }}",
+                "forwarding": "false",
+                "networkInterface": [
+                  {
+                    "name": "mgmt",
+                    "address": [
+                      {
+                        "ipAddress": "{{ instance["mgmt_ipAddress"] }}",
+                        "prefixLength": "{{ instance["mgmt_prefixLength"] }}",
+                        "gateway": "{{ instance["mgmt_gateway"] }}"
+                      }
+                    ],
+                    "defaultRoute": "true",
+                    "managementVector": {
+                      "name": "provider",
+                      "priority": "10"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "wan",
+                "pciAddress": "{{ instance["wan_pciAddress"] }}",
+                "networkInterface": [
+                  {
+                    "name": "wan",
+                    "address": [
+                      {
+                        "ipAddress": "{{ instance["wan_ipAddress"] }}",
+                        "prefixLength": "{{ instance["wan_prefixLength"] }}",
+                        "gateway": "{{ instance["wan_gateway"] }}"
+                      }
+                    ],
+                    "sourceNat": "true",
+                    "conductor": "true",
+                    "interRouterSecurity": "{{ instance["interRouterSecurity"] }}",
+                    "neighborhood": [
+                      {
+                        "name": "{{ instance["neighborhood_name"] }}",
+                        "topology": "hub",
+                        "external-nat-address": "{{ instance["wan_floating_ip"] }}",
+                        "pathMtuDiscovery": {
+                          "enabled": "true"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "lan",
+                "pciAddress": "{{ instance["lan_pciAddress"] }}",
+                "networkInterface": [
+                  {
+                    "name": "lan",
+                    "tenant": "{{ instance["management_tenant"] }}",
+                    "address": [
+                      {
+                        "ipAddress": "{{ instance["lan_ipAddress"] }}",
+                        "prefixLength": "{{ instance["lan_prefixLength"] }}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "reverseSsh": {}
+          }
+        ],
+        "dnsConfig": [
+          {
+            "mode": "static",
+            "address": [
+              {%- for address in instance["dns_servers"] %}
+              "{{ address }}"{% if forloop.last == false %},{% endif %}
+              {%- endfor %}
+            ]
+          }
+        ],
+        "system": {
+          "ntp": {
+            "server": [
+              {%- for address in instance["ntp_servers"] %}
+              {
+                "ipAddress": "{{ address }}"
+              }{% if forloop.last == false %},{% endif %}
+              {%- endfor %}
+            ]
+          }
+        },
+        "serviceRoute": []
+      }
+    ],
+    "tenant": [
+      {
+        "name": "{{ instance["management_tenant"] }}"
+      },
+      {
+        "name": "_internal_"
+      }
+    ],
+    "service": [
+      {
+        "name": "l3nid-inbound",
+        "shareServiceRoutes": "false",
+        "address": [
+          "0.0.0.0/0"
+        ],
+        "accessPolicy": [
+          {
+            "source": "_internal_"
+          }
+        ]
+      },
+      {
+        "name": "l3nid-outbound",
+        "address": [
+          "0.0.0.0/0"
+        ],
+        "shareServiceRoutes": "false",
+        "sourceNat": "disabled",
+        "accessPolicy": [
+          {
+            "source": "_internal_"
+          }
+        ],
+        "generateCategories": "true"
+      },
+      {
+        "name": "M365-Common.l3nid-outbound",
+        "applicationName": [
+          "O365-Common"
+        ]
+      },
+      {
+        "name": "M365-Exchange.l3nid-outbound",
+        "applicationName": [
+          "O365-Exchange"
+        ]
+      },
+      {
+        "name": "M365-SharePoint.l3nid-outbound",
+        "applicationName": [
+          "O365-SharePoint"
+        ]
+      },
+      {
+        "name": "M365-Skype.l3nid-outbound",
+        "applicationName": [
+          "O365-Skype"
+        ]
+      }
+    ]
+  }
+}
+{% endfor %}

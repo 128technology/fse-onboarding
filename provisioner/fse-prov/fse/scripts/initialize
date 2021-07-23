@@ -1,0 +1,40 @@
+#!/usr/bin/python3
+
+"""
+Helper module for rehoming stores between pods.
+"""
+
+import sys
+
+import click
+
+from fse import fse_data, fse_db
+from provisioner import cli, log_utils
+from provisioner.database import database_helpers
+import subprocess, json, os, time, logging
+
+@cli.command()
+@click.argument(
+    "template_names",
+    nargs=-1,
+)
+def main(LOG, verbose, template_names):
+    log_utils.audit(LOG, f"uploading templates {', '.join(template_names)}")
+
+    # variables = get_data(results_reporter)
+    variables = data = {"instances": []}
+    print(variables)
+
+
+    template_list = fse_data.REST_CONDUCTOR_INTERFACE.list_templates(fse_data.CONDUCTOR_IP[0])
+
+    for template in template_names:
+        fse_data.REST_CONDUCTOR_INTERFACE.upload_template_to_conductor(
+            template,
+            variables,
+            fse_data.CONDUCTOR_IP[0],
+            force=True if template in template_list else False,
+            )
+
+if __name__ == "__main__":
+    main()

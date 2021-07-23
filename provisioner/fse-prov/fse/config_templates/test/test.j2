@@ -1,0 +1,19 @@
+{% for instance in instances %}
+{% editgroup %}
+{
+  "authority": {
+    "router": [
+      {
+        "name": "{{instance.storeId}}",
+        "serviceRoute": [
+          {
+            "name": "Store_RX_DVR_Workstation2_local_route",
+            "serviceName": "Store_RX_DVR_Workstation1",
+            "natTarget": "192.168.10.15"
+          }
+        ]
+      }
+    ]
+  }
+}
+{% endfor %}

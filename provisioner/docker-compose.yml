@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+  PROV:
+    restart: always
+    image: fse-provisioner:${PROVISIONER_CONTAINER_VERSION}
+    # build: fse-prov/
+    privileged: true
+    ports:
+      - 3006:3006
+    links:
+      - web
+    volumes:
+      - PROV:/root/128T-provisioner
+      - PROV_salt:/etc/salt
+      - PROV_logs:/var/log
+      - ./provisioner/ssh:/home/admin/.ssh:ro
+      - ./provisioner/sandbox:/home/sandbox
+      - /root/config_templates:/usr/share/128T-provisioner/config_templates
+      - ./provisioner/provisioner.yml:/usr/share/128T-provisioner/provisioner.yml:ro
+  web:
+    restart: always
+    build: ./file-web-db/
+    ports:
+      - 5000:5000
+    volumes:
+      - ./database:/var/www/data
+      - ./provisioner/file_web_db.yml:/usr/share/flask/file_web_db.yml:ro
+
+volumes:
+  PROV: {}
+  PROV_logs: {}
+  PROV_salt: {}

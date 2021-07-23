@@ -1,0 +1,9 @@
+version: '3.4'
+services:
+  web:
+    restart: on-failure
+    build: .
+    ports:
+      - 5000:5000
+    volumes:
+      - ./database:/var/www/data

@@ -1,0 +1,155 @@
+admin@node1.blaster-conductor# compare config running candidate
+
+config
+
+    authority
+        name               L3NID_Authority
+        conductor-address  172.25.1.11
+
+        router             l3niddc
+            name                  l3niddc
+            location              "Atlanta, GA"
+            location-coordinates  +33.7601772-084.3585778/
+            router-group          datacenter
+            inter-node-security   internal
+
+            dns-config            static
+                mode     static
+                address  1.1.1.1
+                address  1.0.0.1
+            exit
+
+            system
+
+                ntp
+
+                    server  8.8.8.8
+                        ip-address  8.8.8.8
+                    exit
+                exit
+            exit
+
+            node                  node1
+                name              node1
+                role              combo
+
+                device-interface  mgmt
+                    name               mgmt
+                    pci-address        0000:00:03.0
+                    forwarding         false
+
+                    network-interface  mgmt
+                        name               mgmt
+                        default-route      true
+
+                        management-vector
+                            name      provider
+                            priority  100
+                        exit
+
+                        address            172.25.1.15
+                            ip-address     172.25.1.15
+                            prefix-length  24
+                            gateway        172.25.1.1
+                        exit
+                    exit
+                exit
+
+                device-interface  wan
+                    name               wan
+                    pci-address        0000:00:04.0
+
+                    network-interface  wan
+                        name                   wan
+                        conductor              true
+
+                        neighborhood           datacenter
+                            name                datacenter
+                            topology            hub
+
+                            path-mtu-discovery
+                                enabled  true
+                            exit
+                        exit
+                        inter-router-security  internal
+                        source-nat             true
+
+                        address                172.25.3.20
+                            ip-address     172.25.3.20
+                            prefix-length  24
+                            gateway        172.25.3.1
+                        exit
+                    exit
+                exit
+
+                device-interface  lan
+                    name               lan
+                    pci-address        0000:00:05.0
+
+                    network-interface  lan
+                        name     lan
+                        tenant   mgmt
+
+                        address  192.168.1.1
+                            ip-address     192.168.1.1
+                            prefix-length  24
+                        exit
+                    exit
+                exit
+            exit
+        exit
+
+        tenant             mgmt
+            name  mgmt
+        exit
+
+        service            l3nid-inbound
+            name                  l3nid-inbound
+            address               0.0.0.0/0
+
+            access-policy         _internal_
+                source  _internal_
+            exit
+            share-service-routes  false
+        exit
+
+        service            l3nid-outbound
+            name                  l3nid-outbound
+            address               0.0.0.0/0
+            generate-categories   true
+
+            access-policy         _internal_
+                source  _internal_
+            exit
+            share-service-routes  false
+            source-nat            disabled
+        exit
+
+        service            M365-Common.l3nid-outbound
+            name              M365-Common.l3nid-outbound
+            application-name  O365-Common
+        exit
+
+        service            M365-Exchange.l3nid-outbound
+            name              M365-Exchange.l3nid-outbound
+            application-name  O365-Exchange
+        exit
+
+        service            M365-SharePoint.l3nid-outbound
+            name              M365-SharePoint.l3nid-outbound
+            application-name  O365-SharePoint
+        exit
+
+        service            M365-Skype.l3nid-outbound
+            name              M365-Skype.l3nid-outbound
+            application-name  O365-Skype
+        exit
+
+        dns-app-id
+            generate-services  true
+            base-service       l3nid-outbound
+        exit
+    exit
+exit
+
+admin@node1.blaster-conductor#

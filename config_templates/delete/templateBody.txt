@@ -1,0 +1,25 @@
+{% for instance in instances %}
+{% editgroup %}
+{% capture dns_service_name %}{{ instance.variables['routerName'] }}-dns{% endcapture %}
+{% capture mgmt_service_name %}{{ instance.variables['routerName']}}-mgmt{% endcapture %}
+{
+  "authority": {
+    "router": [
+      {
+        "_value": { "name": "{{instance.variables['routerName']}}" },
+        "_operation": "delete"
+      }
+    ],
+    "service": [
+      {
+        "_value": { "name": "{{ mgmt_service_name }}" },
+        "_operation": "delete"
+      },
+      {
+        "_value": { "name": "{{ dns_service_name }}" },
+        "_operation": "delete"
+      }
+    ]
+  }
+}
+{% endfor %}

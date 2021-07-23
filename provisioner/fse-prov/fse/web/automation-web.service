@@ -1,0 +1,12 @@
+[Unit]
+# place in /usr/lib/systemd/system/automation-web.service
+Description=Web app for automation
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/usr/bin/node /usr/share/128T-provisioner/web/server.js
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>128T Automation Tools</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link href="css/roboto.css" rel="stylesheet">
+  <link href="css/material-icons.css" rel="stylesheet">
+  <link href="css/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <script src="js/lib/vue.js"></script>
+  <script src="js/lib/vuetify.js"></script>
+  <script src="js/lib/clipboard.min.js"></script>
+  <script src="js/lib/axios.min.js"></script>
+  <style>[v-cloak] { display: none;}</style>
+</head>
+
+<body>
+  <v-app id="app" v-cloak>
+
+  <v-navigation-drawer v-model="drawer" absolute temporary>
+    <v-list>
+      <v-list-tile>
+        <v-list-tile-action>
+          <v-icon @click.stop="drawer = !drawer">chevron_left</v-icon>
+        </v-list-tile-action>
+        <v-list-tile-title>
+          Toolbox
+        </v-list-tile-title>
+      </v-list-tile>
+    </v-list>
+    <v-progress-circular v-if="loadingToolsManifest" indeterminate color="primary"></v-progress-circular>
+    <v-list>
+      <v-list-tile v-for="tool in toolsManifest" :key="tool.name" @click="selectedTool = tool.name; drawer = !drawer">
+        <v-list-tile-content>
+          <v-list-tile-title>{{ tool.name }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+    </v-list>
+  </v-navigation-drawer>
+
+  <v-toolbar style="background-color:#39697C" class="white--text" app absolute>
+    <v-toolbar-side-icon class="white--text" @click.stop="drawer = !drawer">
+      <v-icon>build</v-icon>
+    </v-toolbar-side-icon>
+    <v-toolbar-title>128T Automation Tools</v-toolbar-title>
+  </v-toolbar>
+
+  <v-content>
+    <v-container grid-list-md fluid v-for="tool in toolsManifest" :key="tool.name" v-if="selectedTool === tool.name">
+      <v-layout row wrap>
+        <v-flex xs12>
+          <v-card>
+            <v-card-title primary-title>
+              <h3 class="headline mb-0">{{ tool.name }}</h3>
+            </v-card-title>
+            <v-card-text>
+              <div>
+                  <v-text-field :label="tool.userInput.description" v-model="tool.userInput.value" :rules="[tool.userInput.validate]" regular></v-text-field>
+              </div>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-btn color="success" v-on:click="runTool(tool.resource)" :loading="tool.inProgress" :disabled="!tool.userInput.isValid">Run</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+
+        <v-flex xs12>
+          <v-card dark v-if="tool.results != null">
+            <v-card-title primary-title>
+              <h3 class="headline mb-0">Results</h3>
+            </v-card-title>
+
+            <v-card-text>
+              <div>
+              <v-snackbar v-model="textCopied" color="success" :timeout="timeout" top right>Copied to clipboard!</v-snackbar>
+              <v-btn fab right top absolute style="background-color:#9C7C33" class="white--text" data-clipboard-action="copy" data-clipboard-target="#configText"><i class="material-icons">file_copy</i></v-btn>
+              <pre>{{ tool.results }}</pre>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-container>
+  <v-content>
+
+  </v-app>
+</body>
+<script src="js/client/client.js" type="text/javascript"></script>
+<script>
+var clipboard = new ClipboardJS('.v-btn')
+clipboard.on('success', ()=> {
+  model.textCopied = true
+})
+</script>
+</html>

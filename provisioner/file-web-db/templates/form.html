@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+  <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="form-wrapper">
+      <h2 class="title">Upload/Delete Form</h2>
+
+      <form method="POST" action="{{ url_for('upload') }}">
+          {{ form.hidden_tag() }}
+
+          <fieldset>
+            <li>
+              {{ form.storeNumber.label }}
+              {{ form.storeNumber }}
+              {% if form.storeNumber.errors %}
+                <ul class="errors">
+                  {% for error in form.storeNumber.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+            <li>
+
+          <!-- <fieldset class="form-field"> -->
+              {{ form.storeId.label }}
+              {{ form.storeId }}
+              {% if form.storeId.errors %}
+                <ul class="errors">
+                  {% for error in form.storeId.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+            </li>
+          <!-- </fieldset>
+
+          <fieldset class="form-field"> -->
+          <li>
+              {{ form.name.label }}
+              {{ form.name }}
+              {% if form.name.errors %}
+                <ul class="errors">
+                  {% for error in form.name.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+            </li>
+          <!-- </fieldset>
+
+          <fieldset class="form-field"> -->
+          <li>
+              {{ form.location.label }}
+              {{ form.location }}
+              {% if form.location.errors %}
+                <ul class="errors">
+                  {% for error in form.location.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+            </li>
+          <!-- </fieldset>
+
+          <fieldset class="submit-button"> -->
+          <li>
+              {{ form.submit }}
+
+            </li>
+          </fieldset>
+
+      </form>
+    </div>
+
+{% endblock %}

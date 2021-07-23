@@ -1,0 +1,37 @@
+{
+  "instances": [
+    {
+      "variables": {
+        "authority_name": "L3NID_Authority",
+        "conductor_address": "192.168.0.100",
+        "dc_router": {
+          "dns_servers": [
+            "1.1.1.1",
+            "1.0.0.1"
+          ],
+          "interNodeSecurity": "internal",
+          "interRouterSecurity": "internal",
+          "lan_ipAddress": "192.168.1.1",
+          "lan_pciAddress": "0000:00:07.0",
+          "lan_prefixLength": "24",
+          "location": "Atlanta, GA",
+          "locationCoordinates": "+33.7601772-084.3585778/",
+          "mgmt_gateway": "192.168.0.1",
+          "mgmt_ipAddress": "172.25.1.15",
+          "mgmt_pciAddress": "0000:00:05.0",
+          "mgmt_prefixLength": "24",
+          "neighborhood_name": "datacenter",
+          "ntp_servers": [
+            "8.8.8.8"
+          ],
+          "routerName": "l3niddc",
+          "wan_gateway": "172.25.3.1",
+          "wan_ipAddress": "172.25.3.20",
+          "wan_pciAddress": "0000:00:06.0",
+          "wan_prefixLength": "24"
+        },
+        "management_tenant": "mgmt"
+      }
+    }
+  ]
+}

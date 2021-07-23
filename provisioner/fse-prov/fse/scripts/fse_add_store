@@ -1,0 +1,93 @@
+#!/usr/bin/python3
+
+"""
+Helper module for rehoming stores between pods.
+"""
+
+import sys
+
+import click
+
+from fse import fse_data, fse_db
+from provisioner import cli, log_utils
+from provisioner.database import database_helpers
+import subprocess, json, os, time, logging
+
+@cli.command()
+@click.option(
+    "--template-name",
+    help="The name of the config template to apply.",
+    type=str,
+    required=True,
+)
+@click.option(
+    "--force",
+    help="Force upload the template (when existing).",
+    is_flag=True,
+)
+@click.option(
+    "--use-test-db",
+    help="Connect to local test database instead of production database.",
+    is_flag=True,
+)
+@click.option(
+    "--render-template",
+    help="Perform commit after applying template.",
+    is_flag=True,
+)
+@click.option(
+    "--perform-commit",
+    help="Perform commit after applying template.",
+    is_flag=True,
+)
+@click.argument("routers", nargs=-1)
+def main(LOG, verbose, template_name, force, use_test_db, render_template, perform_commit, routers):
+    log_utils.audit(LOG, f"Adding stores {', '.join(routers)}")
+
+    database_client = (
+        fse_db.TEST_DATABASE_CLIENT if use_test_db else fse_db.PROD_DATABASE_CLIENT
+    )
+
+    results_reporter = database_helpers.retrieve_and_validate_database_entry(
+        database_client,
+        fse_db.FseEntry,
+        routers,
+    )
+
+    variables = get_data(results_reporter)
+    print(variables)
+
+    fse_data.REST_CONDUCTOR_INTERFACE.upload_template_to_conductor(
+        template_name,
+        variables,
+        fse_data.CONDUCTOR_IP[0],
+        force
+        )
+    # print(fse_data.CONDUCTOR_IP)
+    # template_list = fse_data.REST_CONDUCTOR_INTERFACE.list_templates(fse_data.CONDUCTOR_IP[0])
+    # print(template_list)
+
+    if render_template:
+        fse_data.REST_CONDUCTOR_INTERFACE.render_template(
+            fse_data.CONDUCTOR_IP[0],
+            template_name
+            )
+
+    if perform_commit:
+        log_utils.audit(LOG, f"Commiting candidate config")
+        fse_data.REST_CONDUCTOR_INTERFACE.commit_candidate(fse_data.CONDUCTOR_IP[0])
+
+    details = results_reporter.get_details()
+    print(details)
+
+def get_data(results_reporter):
+    data = {"instances": []}
+    entries = results_reporter.get_entry_ids()
+    for entry_id in entries:
+        database_entry = results_reporter.get_entry_data(entry_id)
+        context = database_entry.data
+        data["instances"].append(context)
+    return data
+
+if __name__ == "__main__":
+    main()
