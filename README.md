@@ -21,6 +21,8 @@ For rapid prototyping, these elements can all be built in AWS in an automated ma
 
 ## Provision a L3NID in conductor
 
+A detailed technical/user guide detailed in the
+[Provisioner](./provisioner.md) document
 
 ## Stage the L3NID hardware
 
